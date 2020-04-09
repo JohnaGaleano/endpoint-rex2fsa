@@ -118,6 +118,7 @@ public class EndpointController {
 
     public void setTableRows(List<LambdaState> states, List<StateResponse> stateR, List<TransitionResponse> transitionR, String symbols) {
         boolean firstState = true;
+        boolean errorState = true;
         for (int i = 0; i < states.size(); i++) {
             LambdaState state = states.get(i);
             for (int j = 0; j < symbols.length(); j++) {
@@ -131,6 +132,10 @@ public class EndpointController {
                     nextState = int2String(state.transitions.get(inputSymbol));
                 } catch (Exception e) {
                     nextState = "Error";
+                    if (errorState) {
+                        stateR.add(new StateResponse("Error", false, false));
+                        errorState = false;
+                    }
                 }
 
                 transitionR.add(new TransitionResponse(actualState, inputSymbol, nextState));
@@ -197,7 +202,7 @@ public class EndpointController {
         char[] charArray = IntStream.rangeClosed('A', 'Z')
                 .mapToObj(c -> "" + (char) c).collect(Collectors.joining()).toCharArray();
 
-        String state=String.valueOf(charArray[numb]);
+        String state = String.valueOf(charArray[numb]);
         return state;
     }
 }
